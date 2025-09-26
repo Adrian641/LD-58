@@ -1,2 +1,4 @@
 winget install -e --id Unity.UnityHub
 winget install -e --id GitHub.GitHubDesktop
+
+\\installer l'editeur 6,2(6000.2.6f1) de unity "la plus recente et la recommande"
