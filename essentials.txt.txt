@@ -1,0 +1,2 @@
+winget install -e --id Unity.UnityHub
+winget install -e --id GitHub.GitHubDesktop
