@@ -131,37 +131,24 @@ public class player_mouvement_demo : MonoBehaviour
 
             // Can only walk if is not touching the wall and for a little while after wall jumping
             if (horizontalInput != 0 && !_isTouchingWall && WallJumpRestrainTimer < 0)
-            {
                 Walk();
-            }
 
             if (Input.GetKeyDown(KeyCode.Space) && CoyoteJumpTimer > 0 && WallJumpRestrainTimer < 0 || Input.GetKeyDown(KeyCode.W) && CoyoteJumpTimer > 0 && WallJumpRestrainTimer < 0)
-            {
                 Jump();
-            }
 
             // Call BufferJump if jumps while in the air
             if (Input.GetKeyDown(KeyCode.Space) && !_isGrounded || Input.GetKeyDown(KeyCode.W) && !_isGrounded)
-            {
                 BufferJump();
-            }
 
             // Can only cut the jump is he is in the upwards movement of the jump
             if (Input.GetKeyUp(KeyCode.Space) && _isJumpCut && WallJumpRestrainTimer < 0 || Input.GetKeyUp(KeyCode.W) && _isJumpCut && WallJumpRestrainTimer < 0)
-            {
                 JumpCut();
-            }
 
             if (_canWallJump)
-            {
-
                 // Can only wall jump if on the wall and not on the ground or if CoyoteWallJumpTimer is positive
                 if (Input.GetKeyDown(KeyCode.Space) && _isTouchingWall && !_isGrounded || Input.GetKeyDown(KeyCode.W) && _isTouchingWall && !_isGrounded
                     || Input.GetKeyDown(KeyCode.Space) && CoyoteWallJumpTimer > 0 && !_isGrounded || Input.GetKeyDown(KeyCode.W) && CoyoteWallJumpTimer > 0 && !_isGrounded)
-                {
                     WallJump();
-                }
-            }
 
             //if (Input.GetKeyDown(KeyCode.P))
             //{
@@ -359,15 +346,11 @@ public class player_mouvement_demo : MonoBehaviour
 
         // Jump when moving
         if (horizontalInput != 0)
-        {
             rb.velocity = new Vector2(WallJumpForce.x * -WallJumpDirection, 2 * WallJumpForce.y);
-        }
 
         //  Jump when not moving
         if (horizontalInput == 0)
-        {
             rb.velocity = new Vector2(WallJumpForce.x * -WallJumpDirection, 2 * WallJumpForce.y);
-        }
     }
 
     #endregion
@@ -378,14 +361,10 @@ public class player_mouvement_demo : MonoBehaviour
     {
 
         if (Dir.x == 1)
-        {
             transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-        }
 
         if (Dir.x == -1)
-        {
             transform.localScale = new Vector3(-0.5f, 0.5f, 0.5f);
-        }
     }
 
     #endregion
