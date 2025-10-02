@@ -292,8 +292,6 @@ public class player_mouvement_demo : MonoBehaviour
 
     #endregion
 
-    #region Jump
-
     void BufferJump()
     {
         TimeTilLastJump = 0f;
@@ -321,8 +319,6 @@ public class player_mouvement_demo : MonoBehaviour
         float JumpFall = -(Data_JumpForce / Data_gravityScale) * JumpCutTimer;
         rb.velocity = new Vector2(rb.velocity.x, JumpFall);
     }
-
-    #endregion
 
     #region Wall Jump
 
