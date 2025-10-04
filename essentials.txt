@@ -1,5 +1,0 @@
-winget install -e --id Unity.UnityHub
-winget install -e --id GitHub.GitHubDesktop
-
-\\installer l'editeur 2022.3.62f1 (LTS) de unity
-\\modifier VS com 2022 et ajouter l'installation Game development with Unity avec tous les case optionels coches 
