@@ -23,7 +23,7 @@ MonoBehaviour:
   MaxFallSpeed: 0
   JumpForce: 12.5
   SlideSpeed: -2
-  WallJumpForce: 15
+  WallJumpForce: {x: 8, y: 16}
   RestrainedMoveTime: 0
   WallJumpDistance: 1
   DashForce: 40
