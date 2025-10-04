@@ -72,6 +72,10 @@ public class PlayerMouvement : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Mouse1) && _canDash || Input.GetKeyDown(KeyCode.L) && _canDash)
                 Dash();
+            if (_isSliding || _isGrabing)
+                animator.SetBool("isOnWall", true);
+            else
+                animator.SetBool("isOnWall", false);
 
             if (_isTouchingWall && !_isGrounded && Dir.x != 0 && rb.velocity.y < 0f && !_isGrabing)
                 Slide();
@@ -86,8 +90,15 @@ public class PlayerMouvement : MonoBehaviour
                 coyoteJumpTimer = Data.CoyoteJumpTime;
                 _canDash = true;
                 _isSliding = false;
+                animator.SetBool("isStable", false);
+                animator.SetBool("isJumping", false);
+                animator.SetBool("isFalling", false);
+                animator.SetBool("isOnGround", true);
             }
-            if(_isTouchingWall)
+            if (!_isGrounded)
+                animator.SetBool("isOnGround", false);
+
+                if (_isTouchingWall)
                 coyoteWallJumpTimer = Data.CoyoteJumpTime;
 
             if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
@@ -97,6 +108,26 @@ public class PlayerMouvement : MonoBehaviour
 
             if (rb.velocity.y < 0f)
                 rb.gravityScale = Data.gravityScale + Data.FallSpeed;
+
+            if (rb.velocity.y > 3f)
+            {
+                animator.SetBool("isJumping", true);
+                animator.SetBool("isStable", false);
+                animator.SetBool("isFalling", false);
+            }
+
+            else if (rb.velocity.y < -3f)
+            {
+                animator.SetBool("isFalling", true);
+                animator.SetBool("isJumping", false);
+                animator.SetBool("isStable", false);
+            }
+            else
+            {
+                animator.SetBool("isStable", true);
+                animator.SetBool("isFalling", false);
+                animator.SetBool("isJumping", false);
+            }
         }
         else
         {
