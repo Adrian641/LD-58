@@ -1,287 +1,205 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class PlayerMouvement : MonoBehaviour
 {
-    [SerializeField] private Animator animator; //Je sais pas pentoute c'est quoi ça.
+    [SerializeField] private Animator animator;
 
-    //public PlayerMouvementData Data; // Make a reference to the PlayerMouvementData script which holds most of the variables and logic
+    public PlayerMouvementData Data; // Make a reference to the PlayerMouvementData script which holds most of the variables and logic
 
-    //public Transform GroundCheck;
-    //public LayerMask GroundLayer;
-    //public bool _isGrounded;
+    public bool _isGrounded = false;
+    public Transform GroundCheck;
+    public LayerMask GroundLayer;
 
-    //public Transform WallCheck;
-    //public LayerMask WallLayer;
-    //public bool _isTouchingWall;
+    public bool _isTouchingWall = false;
+    public Transform WallCheck;
+    public LayerMask WallLayer;
 
-    //public bool _isWalking = false;
-    //public bool _isJumpingUp = false;
-    //public bool _isJumpingDown = false;
+    private float accelerationTimer;
 
-    //public bool _isJumpCut; // True if the player releases the jump or if he starts falling
-    //float JumpCutTimer; // Time since the JumpCut was perfomed ; used for accelerating the player downward more and more as he falls
-    //float TimeTilLastJump = 1f; //
-    //float CoyoteJumpTimer;
+    private float coyoteJumpTimer;
+    private float bufferJumpTimer;
+    private bool _canBufferJump;
 
-    //float DecelerationTimer;
-    //float AccelerationTimer; // Time since the player starts walking ; used for accelerating the player more and more as he walk forward
-    //bool ResetAccelerationTimer; // Used to reset the player's AccelerationTimer when he stops walking
+    private bool _canDash;
+    private bool _isFrozen;
+    private float frozenTimer;
 
-    //public float MoveRestrainTimer;
+    private float slideAcceleration;
+    public bool _isSliding;
+    private float coyoteWallJumpTimer;
 
-    //public bool _canWallJump = false;
-    //public bool _isWallJumping;
-    //public float WallJumpRestrainTimer; // make the player unalble to move after wall jumping
-    //float CoyoteWallJumpTimer; // if jump before landing on wall still jump
-    //float WallJumpDirection; // the direction of the wall
-    //private bool FindWallDir; // Detects if close to a wall, if so get the direction of the wall
+    public bool _isGrabing;
 
-    //Ray ray;
-    //public float maxDistance = 10;
-    //public LayerMask layerToDetect;
+    public Rigidbody2D rb;
+    public Vector2 Dir;
 
-    //float horizontalInput; // Is 0 when the player isn't moving and is 1 or -1 when moving
+    private void Update()
+    {
+        if (!_isFrozen)
+        {
+            rb.gravityScale = Data.gravityScale;
 
-    //public Rigidbody2D rb;
+            coyoteWallJumpTimer -= Time.deltaTime;
+            coyoteJumpTimer -= Time.deltaTime;
+            bufferJumpTimer -= Time.deltaTime;
+            slideAcceleration -= Time.deltaTime;
+            accelerationTimer += Time.deltaTime;
+            accelerationTimer = Mathf.Clamp(accelerationTimer, -5, Data.MaxAcceleration);
+            Debug.Log(accelerationTimer);
 
-    //public Vector2 Dir;
+            Dir.x = Input.GetAxisRaw("Horizontal");
 
-    //void Update()
-    //{
-
-    //    Rotate();
-    //    //CheckForInteractables();
-
-    //    AccelerationTimer += Time.deltaTime;
-    //    DecelerationTimer -= (Time.deltaTime * 10);
-
-    //    JumpCutTimer += Time.deltaTime;
-    //    TimeTilLastJump += Time.deltaTime;
-    //    CoyoteJumpTimer -= Time.deltaTime;
-
-    //    WallJumpRestrainTimer -= Time.deltaTime; // Time the player will be restrained
-    //    CoyoteWallJumpTimer -= Time.deltaTime;
-
-    //    MoveRestrainTimer -= Time.deltaTime;
-
-    //    if (MoveRestrainTimer < 0)
-    //    {
-
-    //        // Always sets the rigidbody2D's gravity to our variable gravityScale
-    //        rb.gravityScale = Data.gravityScale;
-
-    //        horizontalInput = Input.GetAxisRaw("Horizontal");
-
-    //        if (horizontalInput == 1)
-    //            Dir = new Vector2(1, 0);
-
-    //        if (horizontalInput == -1)
-    //            Dir = new Vector2(-1, 0);
-
-            if (horizontalInput != 0)
-                animator.SetBool("isRunning", true);
+            if (Dir.x != 0 && _isGrounded)
+                Walk(Mathf.Clamp(accelerationTimer, Data.ResetAcceleration + 0.10f, Data.MaxAcceleration - 0.25f));
+            else if (Dir.x != 0 && !_isGrounded)
+                Walk(accelerationTimer);
             else
-                animator.SetBool("isRunning", false);
+                rb.velocity = new Vector2(0f, rb.velocity.y);
 
+            if (Input.GetKeyDown(KeyCode.Space) && !_isGrounded)
+            {
+                bufferJumpTimer = Data.BufferJumpTime;
+                _canBufferJump = true;
+            }
+            if (Input.GetKeyDown(KeyCode.Space) && _isGrounded || _isGrounded && bufferJumpTimer > 0f && _canBufferJump || Input.GetKeyDown(KeyCode.Space) && !_isGrounded && coyoteJumpTimer > 0f)
+                Jump();
+            if (Input.GetKeyUp(KeyCode.Space) && rb.velocity.y > Data.MinJumpHeight)
+                JumpCut();
 
-    //        // Can only walk if is not touching the wall and for a little while after wall jumping
-    //        if (horizontalInput != 0 && !_isTouchingWall && WallJumpRestrainTimer < 0)
-    //            Walk();
+            if (Input.GetKeyDown(KeyCode.Mouse1) && _canDash || Input.GetKeyDown(KeyCode.L) && _canDash)
+                Dash();
 
-    //        if (Input.GetKeyDown(KeyCode.Space) && CoyoteJumpTimer > 0 && WallJumpRestrainTimer < 0 || Input.GetKeyDown(KeyCode.W) && CoyoteJumpTimer > 0 && WallJumpRestrainTimer < 0)
-    //            Jump();
+            if (_isTouchingWall && !_isGrounded && Dir.x != 0 && rb.velocity.y < 0f && !_isGrabing)
+                Slide();
+            else
+                slideAcceleration = 0f;
 
-    //        // Call BufferJump if jumps while in the air
-    //        if (Input.GetKeyDown(KeyCode.Space) && !_isGrounded || Input.GetKeyDown(KeyCode.W) && !_isGrounded)
-    //            BufferJump();
+            if (_isSliding && Input.GetKeyDown(KeyCode.Space) && Dir.x != 0 && _isTouchingWall || Input.GetKeyDown(KeyCode.Space) && !_isTouchingWall && coyoteWallJumpTimer > 0f)
+                WallJump();
 
-    //        // Can only cut the jump is he is in the upwards movement of the jump
-    //        if (Input.GetKeyUp(KeyCode.Space) && _isJumpCut && WallJumpRestrainTimer < 0 || Input.GetKeyUp(KeyCode.W) && _isJumpCut && WallJumpRestrainTimer < 0)
-    //            JumpCut();
+            if (_isGrounded)
+            {
+                coyoteJumpTimer = Data.CoyoteJumpTime;
+                _canDash = true;
+                _isSliding = false;
+            }
+            if(_isTouchingWall)
+                coyoteWallJumpTimer = Data.CoyoteJumpTime;
 
-    //        if (_canWallJump)
-    //        {
+            if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+                accelerationTimer = Data.ResetAcceleration;
+            if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+                accelerationTimer = Data.ResetAcceleration;
 
-    //            // Can only wall jump if on the wall and not on the ground or if CoyoteWallJumpTimer is positive
-    //            if (Input.GetKeyDown(KeyCode.Space) && _isTouchingWall && !_isGrounded || Input.GetKeyDown(KeyCode.W) && _isTouchingWall && !_isGrounded
-    //                || Input.GetKeyDown(KeyCode.Space) && CoyoteWallJumpTimer > 0 && !_isGrounded || Input.GetKeyDown(KeyCode.W) && CoyoteWallJumpTimer > 0 && !_isGrounded)
-    //                WallJump();
-    //        }
+            if (rb.velocity.y < 0f)
+                rb.gravityScale = Data.gravityScale + Data.FallSpeed;
+        }
+        else
+        {
+            frozenTimer -= Time.fixedDeltaTime;
+            rb.gravityScale = 0f;
+            if (frozenTimer < 0f)
+            {
+                _isFrozen = false;
+                rb.velocity = Vector2.zero;
+                accelerationTimer = Data.ResetAcceleration;
+            }
+        }
 
-    //        if (Input.GetKeyDown(KeyCode.P))
-    //            _canWallJump = true;
+        if (_isTouchingWall && Input.GetKey(KeyCode.M))
+            WallGrab();
+        if (_isTouchingWall && Input.GetKeyUp(KeyCode.M))
+            frozenTimer = 0f;
 
-    //    }
+        CreateChecks();
 
+        Rotate();
 
-    //    // Creates a capsule under the player that returns true if touching the ground
-    //    _isGrounded = Physics2D.OverlapCapsule(GroundCheck.position, new Vector2(0.33f, 0.33f), CapsuleDirection2D.Horizontal, 0, GroundLayer);
+        if (Dir.x != 0)
+            animator.SetBool("isRunning", true);
+        else
+            animator.SetBool("isRunning", false);
+    }
 
-    //    // Creates a capsule on the side of the player that returns true if touching a wall
-    //    _isTouchingWall = Physics2D.OverlapCapsule(WallCheck.position, new Vector2(0.5f, 0.33f), CapsuleDirection2D.Vertical, 0, WallLayer);
+    void Walk(float acceleration)
+    {
+        rb.velocity = new Vector2(acceleration * Data.MaxWalkSpeed * Dir.x, rb.velocity.y);
+    }
 
-    //    // Detect a wall in front of player to then determine the walls direction ; I don't fucking know why the capsule didn't work out
-    //    FindWallDir = Physics2D.Raycast(transform.position, Dir, 1, WallLayer);
+    void Jump()
+    {
+        rb.velocity = new Vector2(rb.velocity.x, 0f);
+        rb.AddForce(Vector2.up * Data.JumpForce, ForceMode2D.Impulse);
+        _canBufferJump = false;
+    }
 
+    void JumpCut()
+    {
+        rb.velocity = new Vector2(rb.velocity.x, 0f);
+    }
 
-    //    // Always resets the CoyoteJumpTimer when on the ground
-    //    if (_isGrounded)
-    //    {
-    //        CoyoteJumpTimer = Data.CoyoteJumpTime;
-    //    }
+    void Dash()
+    {
+        frozenTimer = Data.DashDuration;
+        _canDash = false;
+        _isFrozen = true;
+        rb.velocity = Vector2.zero;
+        rb.AddForce(new Vector2(Dir.x * Data.DashForce, 0f), ForceMode2D.Impulse);
+    }
 
-    //    // Will jump if on the ground and if the TimeTilLastJump is smaller then the BufferJumpTime set
-    //    if (_isGrounded && TimeTilLastJump < Data.BufferJumpTime && MoveRestrainTimer < 0)
-    //    {
-    //        Jump();
-    //    }
+    void Slide()
+    {
+        _isSliding = true;
+        float slideSpeed = -Data.SlideSpeed * slideAcceleration;
+        rb.velocity = new Vector2(0f, slideSpeed);
+    }
 
-    //    // Can't cut the jump if already falling
-    //    if (rb.velocity.y < 0)
-    //    {
-    //        _isJumpCut = false;
+    void WallJump()
+    {
+        //accelerationTimer = -Data.WallJumpDistance;
+        //_isSliding = false;
+        //if (coyoteWallJumpTimer < 0f)
+        //{
+        //    rb.velocity = Vector2.zero;
+        //    rb.velocity = new Vector2(-Dir.x * Data.WallJumpForce * Data.WallJumpForce, Data.WallJumpForce / 2);
+        //}
+        //else
+        //{
+        //    rb.velocity = Vector2.zero;
+        //    rb.velocity = new Vector2(Dir.x * Data.WallJumpForce * Data.WallJumpForce, Data.WallJumpForce / 2);
+        //}
+    }
 
-    //        _isJumpingUp = false;
-    //        _isJumpingDown = true;
-    //    }
-    //    else
-    //    {
-    //        _isJumpCut = true;
+    void WallGrab()
+    {
+        _isGrabing = true;
+        _isSliding = false;
+        _isFrozen = true;
+        frozenTimer += 1f;
+        if (Input.GetKeyDown(KeyCode.W))
+            rb.velocity = Vector2.up;
+        else if (Input.GetKeyDown(KeyCode.S))
+            rb.velocity = Vector2.down;
+        else
+            rb.velocity = Vector2.zero;
+    }
 
-    //        _isJumpingDown = false;
-    //    }
+    void CreateChecks()
+    {
+        _isGrounded = Physics2D.OverlapCapsule(GroundCheck.position, new Vector2(0.147f, 0.147f), CapsuleDirection2D.Vertical, 0, GroundLayer);
 
-    //    // Can reset the AccelerationTimer and decelerate only if not moving anymore or if not on wall;
-    //    if (horizontalInput == 0 && !_isWallJumping && !_isTouchingWall && MoveRestrainTimer < 0)
-    //    {
-    //        ResetAccelerationTimer = false;
-    //        Deceleration();
+        _isTouchingWall = Physics2D.OverlapCapsule(WallCheck.position, new Vector2(0.147f, 0.273f), CapsuleDirection2D.Vertical, 0, GroundLayer);
+    }
+    void Rotate()
+    {
+        if (Dir.x == 1)
+            transform.localScale = new Vector3(1f, 1f, 1f);
 
-    //        _isWalking = false;
-    //    }
-
-    //    if (_canWallJump)
-    //    {
-
-    //        // Slide if touching a wall
-    //        if (_isTouchingWall && !_isGrounded && !_isJumpCut && MoveRestrainTimer < 0)
-    //            WallSlide();
-
-    //        if (_isGrounded)
-    //            _isWallJumping = false;
-
-    //        if (_isTouchingWall)
-    //        {
-    //            CoyoteWallJumpTimer = Data.CoyoteWallJumpTime;
-
-    //            _isWalking = false;
-    //        }
-
-    //        if (FindWallDir)
-    //            WallJumpDirection = Dir.x;
-    //    }
-    //}
-
-    //void Walk()
-    //{
-    //    _isWalking = true;
-
-    //    DecelerationTimer = 5;
-
-    //    // Resets the AccelerationTimer if stopped moving
-    //    if (!ResetAccelerationTimer)
-    //    {
-    //        // Put the AccelerationTimer to 1 so that the players doesn't start moving to slow
-    //        AccelerationTimer = 1f;
-    //        ResetAccelerationTimer = true;
-    //    }
-    //    // Calculate the TargetSpeed so that it increases as the AccelerationTimer increases
-    //    // Apply the TargetSpeed but Clamp the Target speed between his max and his min
-    //    float TargetSpeed = (horizontalInput * Data.MaxWalkSpeed);
-    //    rb.velocity = new Vector2(Mathf.Clamp(TargetSpeed, -Data.MaxWalkSpeed, Data.MaxWalkSpeed), rb.velocity.y);
-    //}
-
-    //void Deceleration()
-    //{
-    //    // Calculate the DecelerateSpeed so that it decreases as the DecelerationTimer decreases
-    //    // Apply the DecelerateSpeed but Clamp it between his max and his min
-    //    float DecelerateSpeed = Dir.x * Data.WalkDeceleration * DecelerationTimer;
-    //    rb.velocity = new Vector2(Mathf.Clamp(DecelerateSpeed, -Data.MaxWalkSpeed, Data.MaxWalkSpeed), Mathf.Clamp(rb.velocity.y, Data.MaxFallSpeed, Data.JumpForce));
-
-    //    // ensure that the player doesn't deccelerate into the negative
-    //    if (Dir.x == 1 && DecelerateSpeed < 0f && !_isTouchingWall)
-    //        rb.velocity = new Vector2(0f, rb.velocity.y);
-    //    if (Dir.x == -1 && DecelerateSpeed > 0f && !_isTouchingWall)
-    //        rb.velocity = new Vector2(0f, rb.velocity.y);
-    //}
-
-    //void BufferJump()
-    //{
-    //    TimeTilLastJump = 0f;
-    //}
-
-    //void Jump()
-    //{
-
-    //    _isJumpingUp = true;
-
-    //    rb.velocity = new Vector2(rb.velocity.x, 0f);
-    //    rb.AddForce(Vector2.up * Data.JumpForce, ForceMode2D.Impulse);
-    //}
-
-    //void JumpCut()
-    //{
-
-    //    // Ensures that you cant use the coyote jump after jumping once
-    //    // Reset the JumpCutTimer
-    //    CoyoteJumpTimer = 0f;
-    //    JumpCutTimer = 0.02f;
-
-    //    // Calculate the downwards velocity of the player to give him a good air time
-    //    // Apply the downwards velocity
-    //    float JumpFall = -(Data.JumpForce / Data.gravityScale) * JumpCutTimer;
-    //    rb.velocity = new Vector2(rb.velocity.x, JumpFall);
-    //}
-
-    //void WallSlide()
-    //{
-    //    rb.velocity = new Vector2(0f, Data.SlideSpeed);
-    //}
-
-    //void WallJump()
-    //{
-    //    // Set _isWallJumping as true
-    //    _isWallJumping = true;
-
-    //    // Reset WallJumpRestrainTimer
-    //    WallJumpRestrainTimer = Data.RestrainedMoveTime;
-
-    //    // Always put the veloty to zero before applying velocity
-    //    rb.velocity = Vector2.zero;
-
-    //    Vector2 WallJumpForce = new Vector2(Data.WallJumpForce, Data.WallJumpForce);
-
-    //    // Jump when moving
-    //    if (horizontalInput != 0)
-    //        rb.velocity = new Vector2(WallJumpForce.x * -WallJumpDirection, 2 * WallJumpForce.y);
-
-    //    //  Jump when not moving
-    //    if (horizontalInput == 0)
-    //        rb.velocity = new Vector2(WallJumpForce.x * -WallJumpDirection, 2 * WallJumpForce.y);
-    //}
-
-    //void Rotate()
-    //{
-
-    //    if (Dir.x == 1)
-    //        transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-
-
-    //    if (Dir.x == -1)
-    //        transform.localScale = new Vector3(-0.5f, 0.5f, 0.5f);
-    //}
-
+        if (Dir.x == -1)
+            transform.localScale = new Vector3(-1f, 1f, 1f);
+    }
 }

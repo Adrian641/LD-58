@@ -12,14 +12,16 @@ public class PlayerMouvementData : ScriptableObject
 
     [Header("Walk")]
     public float MaxWalkSpeed; // Max walk speed
-    [Range(0.01f, 5f)] public float WalkAcceleration; // The rate of the acceleration
-    [Range(0.01f, 5f)] public float WalkDeceleration;
+    [Range(1f, 5f)] public float MaxAcceleration; // The rate of the acceleration
+    public float ResetAcceleration;
 
     [Space(20)]
 
     [Header("Jump")]
     public float JumpHeight; // The height of the normal jump
     public float JumpTimeToSummit; // The time to reach the top of the jump : the speed of the jump
+    public float FallSpeed;
+    public float MinJumpHeight;
 
 
     [Space(5)]
@@ -33,6 +35,13 @@ public class PlayerMouvementData : ScriptableObject
     [Range(0f, -100f)] public float SlideSpeed;
     public float WallJumpForce;
     public float RestrainedMoveTime;
+    public float WallJumpDistance;
+
+    [Space(20)]
+
+    [Header("Dash")]
+    public float DashForce;
+    public float DashDuration;
 
     [Space(20)]
 
@@ -48,9 +57,5 @@ public class PlayerMouvementData : ScriptableObject
         // Calculate the force of the jump
         gravityScale = (2 * JumpHeight) / (JumpTimeToSummit * JumpTimeToSummit);
         JumpForce = gravityScale * JumpTimeToSummit;
-
-        // Limit the WalkAcceleration & WalkDeceleration
-        WalkAcceleration = Mathf.Clamp(WalkAcceleration, 0.01f, MaxWalkSpeed);
-        WalkDeceleration = Mathf.Clamp(WalkDeceleration, 0.01f, MaxWalkSpeed);
     }
 }

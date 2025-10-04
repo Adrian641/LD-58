@@ -12,17 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d37f2db1c802db049bef0397ae697740, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: 
-  gravityScale: NaN
-  MaxWalkSpeed: 0
-  WalkAcceleration: 0
-  WalkDeceleration: 0
-  JumpHeight: 0
-  JumpTimeToSummit: 0
+  gravityScale: 3.125
+  MaxWalkSpeed: 7
+  MaxAcceleration: 1.25
+  ResetAcceleration: 0.75
+  JumpHeight: 25
+  JumpTimeToSummit: 4
+  FallSpeed: 1
+  MinJumpHeight: 0.85
   MaxFallSpeed: 0
-  JumpForce: NaN
-  SlideSpeed: 0
-  WallJumpForce: 0
+  JumpForce: 12.5
+  SlideSpeed: -2
+  WallJumpForce: 15
   RestrainedMoveTime: 0
-  BufferJumpTime: 0
-  CoyoteJumpTime: 0
-  CoyoteWallJumpTime: 0
+  WallJumpDistance: 1
+  DashForce: 40
+  DashDuration: 1.5
+  BufferJumpTime: 0.1
+  CoyoteJumpTime: 0.12
+  CoyoteWallJumpTime: 2
