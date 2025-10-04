@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class PlayerMouvement : MonoBehaviour
@@ -19,6 +18,7 @@ public class PlayerMouvement : MonoBehaviour
     public LayerMask WallLayer;
 
     private float accelerationTimer;
+    private float decelerationTimer;
 
     private float coyoteJumpTimer;
     private float bufferJumpTimer;
@@ -30,16 +30,18 @@ public class PlayerMouvement : MonoBehaviour
 
     private float slideAcceleration;
     public bool _isSliding;
-    private float coyoteWallJumpTimer;
 
     public bool _isGrabing;
     private float restirctMouvement = 1;
 
     public bool _isWallJumping;
-    public float wallJumpingDir;
-    public float wallJumpCounter;
-    public float wallJumpTime = 0.2f;
-    public float wallJumpDuration = 0.2f;
+    private float wallJumpingDir;
+    private float wallJumpCounter;
+    private float wallJumpTime = 0.075f;
+    private float wallJumpDuration = 0.2f;
+    private bool onlyChangeDirOnce = false;
+
+    private float downwardAcceleration;
 
     public Rigidbody2D rb;
     public Vector2 Dir;
@@ -50,12 +52,13 @@ public class PlayerMouvement : MonoBehaviour
         {
             rb.gravityScale = Data.gravityScale;
 
-            coyoteWallJumpTimer -= Time.deltaTime;
+
             coyoteJumpTimer -= Time.deltaTime;
             bufferJumpTimer -= Time.deltaTime;
             slideAcceleration -= Time.deltaTime;
             accelerationTimer += Time.deltaTime;
             accelerationTimer = Mathf.Clamp(accelerationTimer, -5, Data.MaxAcceleration);
+            decelerationTimer -= (Time.deltaTime * 10f);
 
             Dir.x = Input.GetAxisRaw("Horizontal");
 
@@ -89,7 +92,10 @@ public class PlayerMouvement : MonoBehaviour
             if (_isTouchingWall && !_isGrounded && Dir.x != 0 && rb.velocity.y < 0f && !_isGrabing)
                 Slide();
             else
+            {
                 slideAcceleration = 0f;
+                _isSliding = false;
+            }
 
             WallJump();
 
@@ -106,16 +112,20 @@ public class PlayerMouvement : MonoBehaviour
             if (!_isGrounded)
                 animator.SetBool("isOnGround", false);
 
-                if (_isTouchingWall)
-                coyoteWallJumpTimer = Data.CoyoteJumpTime;
-
             if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
                 accelerationTimer = Data.ResetAcceleration;
             if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
                 accelerationTimer = Data.ResetAcceleration;
 
             if (rb.velocity.y < 0f)
-                rb.gravityScale = Data.gravityScale + Data.FallSpeed;
+            {
+                downwardAcceleration = Mathf.Clamp(downwardAcceleration += Time.deltaTime, 1f, 3f);
+                rb.gravityScale = Data.gravityScale + Data.FallSpeed * downwardAcceleration;
+            }
+            else
+            {
+                downwardAcceleration = 1f;
+            }
 
             if (rb.velocity.y > 3f)
             {
@@ -136,6 +146,9 @@ public class PlayerMouvement : MonoBehaviour
                 animator.SetBool("isFalling", false);
                 animator.SetBool("isJumping", false);
             }
+
+            if (Dir.x == 0 && !_isWallJumping && !_isTouchingWall)
+                Deceleration();
         }
         else
         {
@@ -156,7 +169,7 @@ public class PlayerMouvement : MonoBehaviour
 
         CreateChecks();
 
-        if (_isWallJumping)
+        if (!_isWallJumping)
             Rotate();
 
         if (Dir.x != 0)
@@ -167,7 +180,20 @@ public class PlayerMouvement : MonoBehaviour
 
     void Walk(float acceleration)
     {
+        decelerationTimer = 5f;
         rb.velocity = new Vector2(acceleration * Data.MaxWalkSpeed * Dir.x, rb.velocity.y);
+    }
+
+    void Deceleration()
+    {
+        Debug.Log(rb.velocity.x);
+        float DecelerateSpeed = Dir.x * Data.MaxDeceleration * decelerationTimer * rb.velocity.y;
+        rb.velocity = new Vector2(rb.velocity.x * decelerationTimer, rb.velocity.y);
+
+        //if (Dir.x == 1 && DecelerateSpeed < 0f && !_isTouchingWall)
+        //    rb.velocity = new Vector2(0f, rb.velocity.y);
+        //if (Dir.x == -1 && DecelerateSpeed > 0f && !_isTouchingWall)
+        //    rb.velocity = new Vector2(0f, rb.velocity.y);
     }
 
     void Jump()
@@ -196,6 +222,7 @@ public class PlayerMouvement : MonoBehaviour
         _isSliding = true;
         float slideSpeed = -Data.SlideSpeed * slideAcceleration;
         rb.velocity = new Vector2(0f, slideSpeed);
+
     }
 
     void WallJump()
@@ -203,7 +230,11 @@ public class PlayerMouvement : MonoBehaviour
         if(_isSliding)
         {
             _isWallJumping = false;
-            wallJumpingDir = -Dir.x;
+            if (!onlyChangeDirOnce)
+            {
+                wallJumpingDir = -transform.localScale.x;
+                onlyChangeDirOnce = true;
+            }
             wallJumpCounter = wallJumpTime;
 
             CancelInvoke(nameof(StopWallJumping));
@@ -213,15 +244,16 @@ public class PlayerMouvement : MonoBehaviour
             wallJumpCounter -= Time.deltaTime;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && wallJumpCounter > 0f)
+        if(wallJumpCounter < 0f)
+            onlyChangeDirOnce = false;
+
+        if (Input.GetKeyDown(KeyCode.Space) && wallJumpCounter > -0.02f)
         {
-            Debug.Log("WallJump");
             _isWallJumping = true;
             rb.velocity = new Vector2(wallJumpingDir * Data.WallJumpForce.x, Data.WallJumpForce.y);
             wallJumpCounter = 0f;
         }
-
-        Invoke(nameof(StopWallJumping), wallJumpDuration);
+            Invoke(nameof(StopWallJumping), wallJumpDuration);
     }
 
     private void StopWallJumping()

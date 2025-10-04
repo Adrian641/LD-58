@@ -1175,6 +1175,12 @@ MonoBehaviour:
     m_Bits: 64
   _isSliding: 0
   _isGrabing: 0
+  _isWallJumping: 0
+  wallJumpingDir: 0
+  wallJumpCounter: 0
+  wallJumpTime: 0.075
+  wallJumpDuration: 0.2
+  onlyChangeDirOnce: 0
   rb: {fileID: 1627795513}
   Dir: {x: 0, y: 0}
 --- !u!4 &1627795510

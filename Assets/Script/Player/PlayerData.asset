@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gravityScale: 3.125
   MaxWalkSpeed: 7
-  MaxAcceleration: 1.25
+  MaxAcceleration: 2
+  MaxDeceleration: 5
   ResetAcceleration: 0.75
   JumpHeight: 25
   JumpTimeToSummit: 4
@@ -22,12 +23,10 @@ MonoBehaviour:
   MinJumpHeight: 0.85
   MaxFallSpeed: 0
   JumpForce: 12.5
-  SlideSpeed: -2
-  WallJumpForce: {x: 8, y: 16}
-  RestrainedMoveTime: 0
-  WallJumpDistance: 1
+  SlideSpeed: -10
+  WallJumpForce: {x: 8, y: 12}
+  WallJumpDistance: 48.09
   DashForce: 40
   DashDuration: 1.5
   BufferJumpTime: 0.1
   CoyoteJumpTime: 0.12
-  CoyoteWallJumpTime: 2

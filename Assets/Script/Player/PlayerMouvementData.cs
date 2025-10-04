@@ -13,6 +13,7 @@ public class PlayerMouvementData : ScriptableObject
     [Header("Walk")]
     public float MaxWalkSpeed; // Max walk speed
     [Range(1f, 5f)] public float MaxAcceleration; // The rate of the acceleration
+    [Range(1f, 5f)] public float MaxDeceleration; // The rate of the acceleration
     public float ResetAcceleration;
 
     [Space(20)]
@@ -47,7 +48,6 @@ public class PlayerMouvementData : ScriptableObject
     [Header("Assist")]
     public float BufferJumpTime; // Jump Coyote Time
     public float CoyoteJumpTime; // Fall Jump Coyote Time
-    public float CoyoteWallJumpTime;
 
     private void OnValidate()
     {
