@@ -33,8 +33,7 @@ public class PlayerMouvementData : ScriptableObject
 
     [Header("Wall Jump")]
     [Range(0f, -100f)] public float SlideSpeed;
-    public float WallJumpForce;
-    public float RestrainedMoveTime;
+    public Vector2 WallJumpForce;
     public float WallJumpDistance;
 
     [Space(20)]
