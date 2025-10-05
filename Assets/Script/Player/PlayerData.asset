@@ -29,5 +29,7 @@ MonoBehaviour:
   WallJumpDistance: 1
   DashForce: 30
   DashDuration: 0.175
+  ClimbSpeed: 5
+  Stamina: 0
   BufferJumpTime: 0.1
   CoyoteJumpTime: 0.12
