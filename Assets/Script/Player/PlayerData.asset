@@ -27,7 +27,7 @@ MonoBehaviour:
   SlideSpeed: -10
   WallJumpForce: {x: 8, y: 18}
   WallJumpDistance: 1
-  DashForce: 25
-  DashDuration: 0.175
+  DashForce: 27
+  DashDuration: 1
   BufferJumpTime: 0.1
   CoyoteJumpTime: 0.12
