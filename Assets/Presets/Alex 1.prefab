@@ -81,13 +81,10 @@ GameObject:
   - component: {fileID: 7216071074675830205}
   - component: {fileID: 3257084574284570256}
   - component: {fileID: -767517749836682926}
-<<<<<<< Updated upstream
   - component: {fileID: 3780157498258380048}
-=======
-  - component: {fileID: 3963140209294675576}
->>>>>>> Stashed changes
+  - component: {fileID: 165501294558328107}
   m_Layer: 0
-  m_Name: Alex
+  m_Name: Alex 1
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -102,7 +99,7 @@ Transform:
   m_GameObject: {fileID: 4772952632081149785}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.402, y: -0.026, z: 0}
+  m_LocalPosition: {x: 1.53, y: 1.47, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -279,11 +276,21 @@ CapsuleCollider2D:
   m_Offset: {x: 0.024141252, y: -0.070430756}
   m_Size: {x: 0.5901283, y: 1.0997167}
   m_Direction: 0
-<<<<<<< Updated upstream
 --- !u!114 &3780157498258380048
-=======
---- !u!114 &3963140209294675576
->>>>>>> Stashed changes
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4772952632081149785}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ef3147d6638e094da0c5416d1d79f9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lastSavedPos: {x: 0, y: 0}
+  _isDead: 0
+--- !u!114 &165501294558328107
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
