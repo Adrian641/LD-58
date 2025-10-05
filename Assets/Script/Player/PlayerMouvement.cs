@@ -172,11 +172,7 @@ public class PlayerMouvement : MonoBehaviour
                 accelerationTimer = Data.ResetAcceleration;
             }
         }
-
-        if (_isTouchingWall && Input.GetKey(KeyCode.M))
-            WallGrab();
-        if (_isTouchingWall && Input.GetKeyUp(KeyCode.M))
-            frozenTimer = 0f;
+        WallGrab();
 
         CreateChecks();
 
@@ -211,7 +207,6 @@ public class PlayerMouvement : MonoBehaviour
         frozenTimer = Data.DashDuration;
         _canDash = false;
         _isFrozen = true;
-        //rb.velocity = Vector2.zero;
         rb.velocity = new Vector2(horizontalInput, verticalInput).normalized * Data.DashForce;
         if (horizontalInput == 0f && verticalInput == 0f)
             rb.velocity = new Vector2(Dir.x * Data.DashForce, 0f);
@@ -230,7 +225,7 @@ public class PlayerMouvement : MonoBehaviour
 
     void WallJump()
     {
-        if(_isSliding)
+        if (_isSliding)
         {
             accelerationTimer = Data.ResetAcceleration;
             _isWallJumping = false;
@@ -248,7 +243,7 @@ public class PlayerMouvement : MonoBehaviour
             wallJumpCounter -= Time.deltaTime;
         }
 
-        if(wallJumpCounter < 0f)
+        if (wallJumpCounter < 0f)
             onlyChangeDirOnce = false;
 
         if (Input.GetKeyDown(KeyCode.Space) && wallJumpCounter > -0.02f)
@@ -258,7 +253,7 @@ public class PlayerMouvement : MonoBehaviour
             rb.velocity = new Vector2(wallJumpingDir * Data.WallJumpForce.x, Data.WallJumpForce.y);
             wallJumpCounter = 0f;
         }
-            Invoke(nameof(StopWallJumping), wallJumpDuration);
+        Invoke(nameof(StopWallJumping), wallJumpDuration);
     }
 
     private void StopWallJumping()
@@ -268,16 +263,24 @@ public class PlayerMouvement : MonoBehaviour
 
     void WallGrab()
     {
-        _isGrabing = true;
-        _isSliding = false;
-        _isFrozen = true;
-        frozenTimer += 1f;
-        if (Input.GetKeyDown(KeyCode.W))
-            rb.velocity = Vector2.up;
-        else if (Input.GetKeyDown(KeyCode.S))
-            rb.velocity = Vector2.down;
-        else
-            rb.velocity = Vector2.zero;
+        if (_isTouchingWall && Input.GetKey(KeyCode.M))
+        {
+            _isGrabing = true;
+            _isSliding = false;
+            _isFrozen = true;
+            frozenTimer += 1f;
+            if (Input.GetKey(KeyCode.W) && _isTouchingWall)
+                rb.velocity = new Vector2(0f, Data.ClimbSpeed);
+            else if (Input.GetKey(KeyCode.S) && _isTouchingWall)
+                rb.velocity = new Vector2(0f, -Data.ClimbSpeed);
+            else
+                rb.velocity = Vector2.zero;
+
+            if(Input.GetKey(KeyCode.W) && !_isTouchingWall)
+                rb.velocity = new Vector2(wallJumpingDir * Data.WallJumpForce.x, Data.WallJumpForce.y);
+        }
+        if (_isTouchingWall && Input.GetKeyUp(KeyCode.M))
+            frozenTimer = 0f;
     }
 
     void CreateChecks()
