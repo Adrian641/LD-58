@@ -18,7 +18,6 @@ public class PlayerMouvement : MonoBehaviour
     public LayerMask WallLayer;
 
     private float accelerationTimer;
-    private float decelerationTimer;
 
     private float coyoteJumpTimer;
     private float bufferJumpTimer;
@@ -32,18 +31,19 @@ public class PlayerMouvement : MonoBehaviour
     public bool _isSliding;
 
     public bool _isGrabing;
-    private float restirctMouvement = 1;
 
     public bool _isWallJumping;
-    private float wallJumpingDir;
-    private float wallJumpCounter;
-    private float wallJumpTime = 0.075f;
-    private float wallJumpDuration = 0.2f;
-    private bool onlyChangeDirOnce = false;
+    public float wallJumpingDir;
+    public float wallJumpCounter;
+    public float wallJumpTime = 0.075f;
+    public float wallJumpDuration = 0.2f;
+    public bool onlyChangeDirOnce = false;
 
     private float downwardAcceleration;
 
     public Rigidbody2D rb;
+    private float horizontalInput;
+    private float verticalInput;
     public Vector2 Dir;
 
     private void Update()
@@ -56,18 +56,25 @@ public class PlayerMouvement : MonoBehaviour
             coyoteJumpTimer -= Time.deltaTime;
             bufferJumpTimer -= Time.deltaTime;
             slideAcceleration -= Time.deltaTime;
-            accelerationTimer += Time.deltaTime;
+            accelerationTimer += Time.deltaTime / Data.AccelerationSpeed;
             accelerationTimer = Mathf.Clamp(accelerationTimer, -5, Data.MaxAcceleration);
-            decelerationTimer -= (Time.deltaTime * 10f);
 
-            Dir.x = Input.GetAxisRaw("Horizontal");
+            verticalInput = Input.GetAxisRaw("Vertical");
+            horizontalInput = Input.GetAxisRaw("Horizontal");
+            if (horizontalInput == 1)
+                Dir.x = 1;
+            if (horizontalInput == -1)
+                Dir.x = -1;
 
             if (!_isWallJumping)
             {
-                if (Dir.x != 0 && _isGrounded)
-                    Walk(Mathf.Clamp(accelerationTimer, Data.ResetAcceleration + 0.10f, Data.MaxAcceleration - 0.25f) * restirctMouvement);
-                else if (Dir.x != 0 && !_isGrounded)
-                    Walk(accelerationTimer * restirctMouvement);
+                if (horizontalInput != 0 && _isGrounded)
+                    Walk(Mathf.Clamp(accelerationTimer, Data.ResetAcceleration + 0.10f, Data.MaxAcceleration - 0.25f));
+                else if (horizontalInput != 0 && !_isGrounded)
+                    if (wallJumpCounter > -0.65f && Dir.x != wallJumpingDir)
+                        Walk(accelerationTimer / Data.restirctAirMouvement);
+                    else
+                        Walk(accelerationTimer);
                 else
                     rb.velocity = new Vector2(0f, rb.velocity.y);
             }
@@ -146,9 +153,6 @@ public class PlayerMouvement : MonoBehaviour
                 animator.SetBool("isFalling", false);
                 animator.SetBool("isJumping", false);
             }
-
-            if (Dir.x == 0 && !_isWallJumping && !_isTouchingWall)
-                Deceleration();
         }
         else
         {
@@ -156,6 +160,7 @@ public class PlayerMouvement : MonoBehaviour
             rb.gravityScale = 0f;
             if (frozenTimer < 0f)
             {
+                _isGrabing = false;
                 _isFrozen = false;
                 rb.velocity = Vector2.zero;
                 accelerationTimer = Data.ResetAcceleration;
@@ -180,20 +185,7 @@ public class PlayerMouvement : MonoBehaviour
 
     void Walk(float acceleration)
     {
-        decelerationTimer = 5f;
         rb.velocity = new Vector2(acceleration * Data.MaxWalkSpeed * Dir.x, rb.velocity.y);
-    }
-
-    void Deceleration()
-    {
-        Debug.Log(rb.velocity.x);
-        float DecelerateSpeed = Dir.x * Data.MaxDeceleration * decelerationTimer * rb.velocity.y;
-        rb.velocity = new Vector2(rb.velocity.x * decelerationTimer, rb.velocity.y);
-
-        //if (Dir.x == 1 && DecelerateSpeed < 0f && !_isTouchingWall)
-        //    rb.velocity = new Vector2(0f, rb.velocity.y);
-        //if (Dir.x == -1 && DecelerateSpeed > 0f && !_isTouchingWall)
-        //    rb.velocity = new Vector2(0f, rb.velocity.y);
     }
 
     void Jump()
@@ -214,11 +206,14 @@ public class PlayerMouvement : MonoBehaviour
         _canDash = false;
         _isFrozen = true;
         rb.velocity = Vector2.zero;
-        rb.AddForce(new Vector2(Dir.x * Data.DashForce, 0f), ForceMode2D.Impulse);
+        rb.AddForce(new Vector2(horizontalInput, verticalInput).normalized * Data.DashForce, ForceMode2D.Impulse);
+        if (horizontalInput == 0f && verticalInput == 0f)
+            rb.AddForce(new Vector2(Dir.x * Data.DashForce, 0f), ForceMode2D.Impulse);
     }
 
     void Slide()
     {
+        accelerationTimer = Data.ResetAcceleration;
         _isSliding = true;
         float slideSpeed = -Data.SlideSpeed * slideAcceleration;
         rb.velocity = new Vector2(0f, slideSpeed);
@@ -229,6 +224,7 @@ public class PlayerMouvement : MonoBehaviour
     {
         if(_isSliding)
         {
+            accelerationTimer = Data.ResetAcceleration;
             _isWallJumping = false;
             if (!onlyChangeDirOnce)
             {
@@ -249,6 +245,7 @@ public class PlayerMouvement : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && wallJumpCounter > -0.02f)
         {
+            accelerationTimer = Data.ResetAcceleration;
             _isWallJumping = true;
             rb.velocity = new Vector2(wallJumpingDir * Data.WallJumpForce.x, Data.WallJumpForce.y);
             wallJumpCounter = 0f;

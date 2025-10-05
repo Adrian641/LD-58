@@ -12,8 +12,8 @@ public class PlayerMouvementData : ScriptableObject
 
     [Header("Walk")]
     public float MaxWalkSpeed; // Max walk speed
-    [Range(1f, 5f)] public float MaxAcceleration; // The rate of the acceleration
-    [Range(1f, 5f)] public float MaxDeceleration; // The rate of the acceleration
+    [Range(1f, 5f)] public float AccelerationSpeed; // The rate of the acceleration
+    [Range(1f, 5f)] public float MaxAcceleration;
     public float ResetAcceleration;
 
     [Space(20)]
@@ -24,6 +24,9 @@ public class PlayerMouvementData : ScriptableObject
     public float FallSpeed;
     public float MinJumpHeight;
 
+    [Space(5)]
+
+    [Range(1f, 10f)] public float restirctAirMouvement;
 
     [Space(5)]
 

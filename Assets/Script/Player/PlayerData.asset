@@ -12,21 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d37f2db1c802db049bef0397ae697740, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: 
-  gravityScale: 3.125
+  gravityScale: 6.6666665
   MaxWalkSpeed: 7
+  AccelerationSpeed: 3.5
   MaxAcceleration: 2
-  MaxDeceleration: 5
   ResetAcceleration: 0.75
-  JumpHeight: 25
-  JumpTimeToSummit: 4
-  FallSpeed: 1
+  JumpHeight: 30
+  JumpTimeToSummit: 3
+  FallSpeed: -2.75
   MinJumpHeight: 0.85
+  restirctAirMouvement: 2
   MaxFallSpeed: 0
-  JumpForce: 12.5
+  JumpForce: 20
   SlideSpeed: -10
-  WallJumpForce: {x: 8, y: 12}
-  WallJumpDistance: 48.09
-  DashForce: 40
-  DashDuration: 1.5
+  WallJumpForce: {x: 8, y: 18}
+  WallJumpDistance: 1
+  DashForce: 35
+  DashDuration: 3
   BufferJumpTime: 0.1
   CoyoteJumpTime: 0.12
