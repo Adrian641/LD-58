@@ -81,7 +81,11 @@ GameObject:
   - component: {fileID: 7216071074675830205}
   - component: {fileID: 3257084574284570256}
   - component: {fileID: -767517749836682926}
+<<<<<<< Updated upstream
   - component: {fileID: 3780157498258380048}
+=======
+  - component: {fileID: 3963140209294675576}
+>>>>>>> Stashed changes
   m_Layer: 0
   m_Name: Alex
   m_TagString: Player
@@ -275,7 +279,11 @@ CapsuleCollider2D:
   m_Offset: {x: 0.024141252, y: -0.070430756}
   m_Size: {x: 0.5901283, y: 1.0997167}
   m_Direction: 0
+<<<<<<< Updated upstream
 --- !u!114 &3780157498258380048
+=======
+--- !u!114 &3963140209294675576
+>>>>>>> Stashed changes
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
