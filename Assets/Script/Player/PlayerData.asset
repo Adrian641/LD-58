@@ -15,7 +15,7 @@ MonoBehaviour:
   gravityScale: 6.6666665
   MaxWalkSpeed: 7
   AccelerationSpeed: 3.5
-  MaxAcceleration: 2
+  MaxAcceleration: 1.5
   ResetAcceleration: 0.75
   JumpHeight: 30
   JumpTimeToSummit: 3
