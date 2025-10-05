@@ -192,6 +192,7 @@ public class PlayerMouvement : MonoBehaviour
                 _isGrabing = false;
                 _isFrozen = false;
                 rb.velocity = Vector2.zero;
+                tr.emitting = false;
                 accelerationTimer = Data.ResetAcceleration;
             }
         }
