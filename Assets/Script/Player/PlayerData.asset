@@ -28,7 +28,7 @@ MonoBehaviour:
   WallJumpForce: {x: 8, y: 18}
   WallJumpDistance: 1
   DashForce: 30
-  DashDuration: 1
+  DashDuration: 1.5
   ClimbSpeed: 5
   Stamina: 0
   BufferJumpTime: 0.1
