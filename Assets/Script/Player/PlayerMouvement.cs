@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerMouvement : MonoBehaviour
 {
@@ -16,6 +17,9 @@ public class PlayerMouvement : MonoBehaviour
     public bool _isTouchingWall = false;
     public Transform WallCheck;
     public LayerMask WallLayer;
+
+    public Transform TopEdgeCheck;
+    public Transform BottomEdgeCheck;
 
     private float accelerationTimer;
 
@@ -41,6 +45,9 @@ public class PlayerMouvement : MonoBehaviour
 
     private float downwardAcceleration;
 
+    private float GripCooldown;
+    float downGripSlipAcc;
+
     public Rigidbody2D rb;
     private float horizontalInput;
     private float verticalInput;
@@ -52,12 +59,14 @@ public class PlayerMouvement : MonoBehaviour
         {
             rb.gravityScale = Data.gravityScale;
 
-
             coyoteJumpTimer -= Time.deltaTime;
             bufferJumpTimer -= Time.deltaTime;
             slideAcceleration -= Time.deltaTime;
             accelerationTimer += Time.deltaTime / Data.AccelerationSpeed;
             accelerationTimer = Mathf.Clamp(accelerationTimer, -5, Data.MaxAcceleration);
+            GripCooldown -= Time.deltaTime;
+
+            downGripSlipAcc += (Time.deltaTime * 3f);
 
             verticalInput = Input.GetAxisRaw("Vertical");
             horizontalInput = Input.GetAxisRaw("Horizontal");
@@ -96,13 +105,7 @@ public class PlayerMouvement : MonoBehaviour
             else
                 animator.SetBool("isOnWall", false);
 
-            if (_isTouchingWall && !_isGrounded && Dir.x != 0 && rb.velocity.y < 0f && !_isGrabing)
-                Slide();
-            else
-            {
-                slideAcceleration = 0f;
-                _isSliding = false;
-            }
+            Slide();
 
             WallJump();
 
@@ -166,7 +169,7 @@ public class PlayerMouvement : MonoBehaviour
                 accelerationTimer = Data.ResetAcceleration;
             }
         }
-        WallGrab();
+        WallGrab(downGripSlipAcc);
 
         CreateChecks();
 
@@ -210,11 +213,18 @@ public class PlayerMouvement : MonoBehaviour
 
     void Slide()
     {
-        accelerationTimer = Data.ResetAcceleration;
-        _isSliding = true;
-        float slideSpeed = -Data.SlideSpeed * slideAcceleration;
-        rb.velocity = new Vector2(0f, slideSpeed);
-
+        if (_isTouchingWall && !_isGrounded && horizontalInput != 0 && rb.velocity.y < 0f && !_isGrabing)
+        {
+            accelerationTimer = Data.ResetAcceleration;
+            _isSliding = true;
+            float slideSpeed = -Data.SlideSpeed * slideAcceleration;
+            rb.velocity = new Vector2(0f, slideSpeed);
+        }
+        else
+        {
+            slideAcceleration = 0f;
+            _isSliding = false;
+        }
     }
 
     void WallJump()
@@ -255,26 +265,50 @@ public class PlayerMouvement : MonoBehaviour
         _isWallJumping = false;
     }
 
-    void WallGrab()
+    void WallGrab(float downAcc)
     {
-        if (_isTouchingWall && Input.GetKey(KeyCode.M))
+        if (_isTouchingWall && Input.GetKey(KeyCode.Mouse0) && GripCooldown < 0f)
         {
+            
+
             _isGrabing = true;
             _isSliding = false;
-            _isFrozen = true;
-            frozenTimer += 1f;
+            rb.gravityScale = 0f;
             if (Input.GetKey(KeyCode.W) && _isTouchingWall)
                 rb.velocity = new Vector2(0f, Data.ClimbSpeed);
             else if (Input.GetKey(KeyCode.S) && _isTouchingWall)
-                rb.velocity = new Vector2(0f, -Data.ClimbSpeed);
+                rb.velocity = new Vector2(0f, -Data.ClimbSpeed * downAcc);
             else
                 rb.velocity = Vector2.zero;
 
-            if(Input.GetKey(KeyCode.W) && !_isTouchingWall)
-                rb.velocity = new Vector2(wallJumpingDir * Data.WallJumpForce.x, Data.WallJumpForce.y);
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                rb.AddForce(Vector2.up * Data.JumpForce, ForceMode2D.Impulse);
+                GripCooldown = 0.4f;
+                _isGrabing = false;
+            }
+
+            bool isOnEdge = Physics2D.OverlapCapsule(TopEdgeCheck.position, new Vector2(1.34f, 0.13f), CapsuleDirection2D.Horizontal, 0, GroundLayer);
+            if (!isOnEdge && Input.GetKey(KeyCode.W))
+            {
+                rb.gravityScale = Data.gravityScale;
+                rb.velocity = new Vector2(0f, Data.JumpForce);
+                GripCooldown = 0.8f;
+                _isGrabing = false;
+            }
+
+            if (Input.GetKeyDown(KeyCode.S))
+                downGripSlipAcc = 0.85f;
+
         }
-        if (_isTouchingWall && Input.GetKeyUp(KeyCode.M))
-            frozenTimer = 0f;
+        else if (_isTouchingWall && Input.GetKey(KeyCode.Mouse0) && GripCooldown > 0f)
+        {
+            _isSliding = true;
+        }
+        if (_isTouchingWall && Input.GetKeyUp(KeyCode.Mouse0))
+            _isGrabing = false;
+        if(_isGrounded)
+            _isGrabing = false;
     }
 
     void CreateChecks()
