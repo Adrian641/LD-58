@@ -96,6 +96,12 @@ public class PlayerMouvement : MonoBehaviour
             else
                 animator.SetBool("isOnWall", false);
 
+            if (_canDash)
+                animator.SetBool("hasDash", true);
+            else
+                animator.SetBool("hasDash", false);
+
+
             if (_isTouchingWall && !_isGrounded && Dir.x != 0 && rb.velocity.y < 0f && !_isGrabing)
                 Slide();
             else
