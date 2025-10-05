@@ -205,10 +205,12 @@ public class PlayerMouvement : MonoBehaviour
         frozenTimer = Data.DashDuration;
         _canDash = false;
         _isFrozen = true;
-        rb.velocity = Vector2.zero;
-        rb.AddForce(new Vector2(horizontalInput, verticalInput).normalized * Data.DashForce, ForceMode2D.Impulse);
+        //rb.velocity = Vector2.zero;
+        rb.velocity = new Vector2(horizontalInput, verticalInput).normalized * Data.DashForce;
         if (horizontalInput == 0f && verticalInput == 0f)
-            rb.AddForce(new Vector2(Dir.x * Data.DashForce, 0f), ForceMode2D.Impulse);
+            rb.velocity = new Vector2(Dir.x * Data.DashForce, 0f);
+        if (_isTouchingWall)
+            _isFrozen = false;
     }
 
     void Slide()
