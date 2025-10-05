@@ -134,14 +134,14 @@ public class PlayerMouvement : MonoBehaviour
                 downwardAcceleration = 1f;
             }
 
-            if (rb.velocity.y > 3f)
+            if (rb.velocity.y > 5f)
             {
                 animator.SetBool("isJumping", true);
                 animator.SetBool("isStable", false);
                 animator.SetBool("isFalling", false);
             }
 
-            else if (rb.velocity.y < -3f)
+            else if (rb.velocity.y < -5f)
             {
                 animator.SetBool("isFalling", true);
                 animator.SetBool("isJumping", false);
@@ -177,7 +177,7 @@ public class PlayerMouvement : MonoBehaviour
         if (!_isWallJumping)
             Rotate();
 
-        if (Dir.x != 0)
+        if (horizontalInput != 0)
             animator.SetBool("isRunning", true);
         else
             animator.SetBool("isRunning", false);
