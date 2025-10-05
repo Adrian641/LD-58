@@ -28,6 +28,6 @@ MonoBehaviour:
   WallJumpForce: {x: 8, y: 18}
   WallJumpDistance: 1
   DashForce: 25
-  DashDuration: 1.75
+  DashDuration: 0.175
   BufferJumpTime: 0.1
   CoyoteJumpTime: 0.12
