@@ -127,6 +127,11 @@ public class PlayerMouvement : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
                 accelerationTimer = Data.ResetAcceleration;
 
+            if (_canDash)
+                animator.SetBool("hasDash", true);
+            else
+                animator.SetBool("hasDash", false);
+
             if (rb.velocity.y < 0f)
             {
                 downwardAcceleration = Mathf.Clamp(downwardAcceleration += Time.deltaTime, 1f, 3f);
