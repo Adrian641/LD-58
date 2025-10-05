@@ -29,9 +29,9 @@ public class PlayerMouvement : MonoBehaviour
     private bool _canBufferJump;
 
     private bool _canDash;
-    //private bool _canLand;
     private bool _isFrozen;
     private float frozenTimer;
+    public TrailRenderer tr;
 
     private float slideAcceleration;
     public bool _isSliding;
@@ -219,6 +219,7 @@ public class PlayerMouvement : MonoBehaviour
 
     void Dash()
     {
+        tr.emitting = true;
         frozenTimer = Data.DashDuration;
         _canDash = false;
         _isFrozen = true;
