@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -37,13 +38,14 @@ public class PlayerMouvement : MonoBehaviour
     public bool _isSliding;
 
     public bool _isGrabing;
+    public int currentStamina;
 
     public bool _isWallJumping;
-    public float wallJumpingDir;
-    public float wallJumpCounter;
-    public float wallJumpTime = 0.075f;
-    public float wallJumpDuration = 0.2f;
-    public bool onlyChangeDirOnce = false;
+    private float wallJumpingDir;
+    private float wallJumpCounter;
+    private float wallJumpTime = 0.075f;
+    private float wallJumpDuration = 0.2f;
+    private bool onlyChangeDirOnce = false;
 
     private float downwardAcceleration;
 
@@ -77,7 +79,7 @@ public class PlayerMouvement : MonoBehaviour
             if (horizontalInput == -1)
                 Dir.x = -1;
 
-            if (!_isWallJumping)
+            if (!_isWallJumping && !_isGrabing)
             {
                 if (horizontalInput != 0 && _isGrounded)
                     Walk(Mathf.Clamp(accelerationTimer, Data.ResetAcceleration + 0.10f, Data.MaxAcceleration - 0.25f));
@@ -113,6 +115,7 @@ public class PlayerMouvement : MonoBehaviour
 
             if (_isGrounded)
             {
+                currentStamina = Data.Stamina;
                 //if (_canLand)
                 //{
                 //    particle.SetBool("isLanding", true);
@@ -145,10 +148,14 @@ public class PlayerMouvement : MonoBehaviour
             else
                 animator.SetBool("hasDash", false);
 
+            Debug.Log(rb.velocity.y);
+
             if (rb.velocity.y < 0f)
             {
-                downwardAcceleration = Mathf.Clamp(downwardAcceleration += Time.deltaTime, 1f, 3f);
+                downwardAcceleration = Mathf.Clamp(downwardAcceleration -= Time.deltaTime, 1f, 3f);
                 rb.gravityScale = Data.gravityScale + Data.FallSpeed * downwardAcceleration;
+                if (rb.velocity.y < -Data.MaxFallSpeed)
+                    rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, -Data.MaxFallSpeed));
             }
             else
             {
@@ -181,17 +188,21 @@ public class PlayerMouvement : MonoBehaviour
             rb.gravityScale = 0f;
             if (frozenTimer < 0f)
             {
+                _canDash = false;
                 _isGrabing = false;
                 _isFrozen = false;
                 rb.velocity = Vector2.zero;
                 accelerationTimer = Data.ResetAcceleration;
             }
         }
-        WallGrab(downGripSlipAcc);
+        if (currentStamina > 0)
+        {
+            WallGrab(downGripSlipAcc);
+        }
 
         CreateChecks();
 
-        if (!_isWallJumping)
+        if (!_isWallJumping && !_isGrabing)
             Rotate();
 
         if (horizontalInput != 0)
@@ -237,7 +248,8 @@ public class PlayerMouvement : MonoBehaviour
             accelerationTimer = Data.ResetAcceleration;
             _isSliding = true;
             float slideSpeed = -Data.SlideSpeed * slideAcceleration;
-            rb.velocity = new Vector2(0f, slideSpeed);
+            if (_isSliding)
+                rb.velocity = new Vector2(rb.velocity.x, slideSpeed);
         }
         else
         {
@@ -276,7 +288,8 @@ public class PlayerMouvement : MonoBehaviour
             rb.velocity = new Vector2(wallJumpingDir * Data.WallJumpForce.x, Data.WallJumpForce.y);
             wallJumpCounter = 0f;
         }
-        Invoke(nameof(StopWallJumping), wallJumpDuration);
+        if (!_isGrabing)
+            Invoke(nameof(StopWallJumping), wallJumpDuration);
     }
 
     private void StopWallJumping()
@@ -288,28 +301,44 @@ public class PlayerMouvement : MonoBehaviour
     {
         if (_isTouchingWall && Input.GetKey(KeyCode.Mouse0) && GripCooldown < 0f)
         {
-            
-
             _isGrabing = true;
             _isSliding = false;
             rb.gravityScale = 0f;
             if (Input.GetKey(KeyCode.W) && _isTouchingWall)
-                rb.velocity = new Vector2(0f, Data.ClimbSpeed);
-            else if (Input.GetKey(KeyCode.S) && _isTouchingWall)
-                rb.velocity = new Vector2(0f, -Data.ClimbSpeed * downAcc);
-            else
+            {
                 rb.velocity = Vector2.zero;
+                rb.velocity = new Vector2(0f, Data.ClimbSpeed);
+            }
+            else if (Input.GetKey(KeyCode.S) && _isTouchingWall)
+            {
+                rb.velocity = Vector2.zero;
+                rb.velocity = new Vector2(0f, -Data.ClimbSpeed * downAcc);
+            }
+            else
+            {
+                rb.velocity = Vector2.zero;
+            }
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space) && horizontalInput == 0)
             {
                 rb.AddForce(Vector2.up * Data.JumpForce, ForceMode2D.Impulse);
                 GripCooldown = 0.4f;
+                _isGrabing = false;
+            }
+            if (Input.GetKeyDown(KeyCode.Space) && horizontalInput != 0)
+            {
+                wallJumpCounter = wallJumpTime;
+                _isWallJumping = true;
+                rb.gravityScale = Data.gravityScale;
+                rb.velocity = new Vector2(Data.WallJumpForce.x * wallJumpingDir, Data.WallJumpForce.y);
+                GripCooldown = 0.8f;
                 _isGrabing = false;
             }
 
             bool isOnEdge = Physics2D.OverlapCapsule(TopEdgeCheck.position, new Vector2(1.34f, 0.13f), CapsuleDirection2D.Horizontal, 0, GroundLayer);
             if (!isOnEdge && Input.GetKey(KeyCode.W))
             {
+                accelerationTimer = Data.ResetAcceleration;
                 rb.gravityScale = Data.gravityScale;
                 rb.velocity = new Vector2(0f, Data.JumpForce);
                 GripCooldown = 0.8f;
@@ -326,13 +355,16 @@ public class PlayerMouvement : MonoBehaviour
         }
         if (_isTouchingWall && Input.GetKeyUp(KeyCode.Mouse0))
             _isGrabing = false;
-        if(_isGrounded)
+        if (_isGrounded)
             _isGrabing = false;
+        if (!_isTouchingWall)
+            _isGrabing = false;
+
     }
 
     void CreateChecks()
     {
-        _isGrounded = Physics2D.OverlapCapsule(GroundCheck.position, new Vector2(0.147f, 0.147f), CapsuleDirection2D.Vertical, 0, GroundLayer);
+        _isGrounded = Physics2D.OverlapCapsule(GroundCheck.position, new Vector2(0.374f, 0.104f), CapsuleDirection2D.Horizontal, 0, GroundLayer);
 
         _isTouchingWall = Physics2D.OverlapCapsule(WallCheck.position, new Vector2(0.147f, 0.273f), CapsuleDirection2D.Vertical, 0, GroundLayer);
     }

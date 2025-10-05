@@ -15,14 +15,14 @@ MonoBehaviour:
   gravityScale: 6.6666665
   MaxWalkSpeed: 7
   AccelerationSpeed: 3.5
-  MaxAcceleration: 1.5
+  MaxAcceleration: 1.2
   ResetAcceleration: 0.75
   JumpHeight: 30
   JumpTimeToSummit: 3
   FallSpeed: -2.75
   MinJumpHeight: 0.85
   restirctAirMouvement: 2
-  MaxFallSpeed: 0
+  MaxFallSpeed: 15
   JumpForce: 20
   SlideSpeed: -10
   WallJumpForce: {x: 8, y: 18}
@@ -30,6 +30,6 @@ MonoBehaviour:
   DashForce: 30
   DashDuration: 1.5
   ClimbSpeed: 5
-  Stamina: 0
+  Stamina: 20
   BufferJumpTime: 0.1
   CoyoteJumpTime: 0.12

@@ -50,7 +50,7 @@ public class PlayerMouvementData : ScriptableObject
 
     [Header("Climb")]
     public float ClimbSpeed;
-    public float Stamina;
+    [Range(0, 20)] public int Stamina;
 
     [Header("Assist")]
     public float BufferJumpTime; // Jump Coyote Time
