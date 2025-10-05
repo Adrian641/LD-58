@@ -7,6 +7,7 @@ using UnityEngine.UIElements;
 public class PlayerMouvement : MonoBehaviour
 {
     [SerializeField] private Animator animator;
+    //[SerializeField] private Animator particle;
 
     public PlayerMouvementData Data; // Make a reference to the PlayerMouvementData script which holds most of the variables and logic
 
@@ -28,6 +29,7 @@ public class PlayerMouvement : MonoBehaviour
     private bool _canBufferJump;
 
     private bool _canDash;
+    //private bool _canLand;
     private bool _isFrozen;
     private float frozenTimer;
 
@@ -111,6 +113,11 @@ public class PlayerMouvement : MonoBehaviour
 
             if (_isGrounded)
             {
+                //if (_canLand)
+                //{
+                //    particle.SetBool("isLanding", true);
+
+                //}
                 coyoteJumpTimer = Data.CoyoteJumpTime;
                 _canDash = true;
                 _isSliding = false;
@@ -118,9 +125,15 @@ public class PlayerMouvement : MonoBehaviour
                 animator.SetBool("isJumping", false);
                 animator.SetBool("isFalling", false);
                 animator.SetBool("isOnGround", true);
+                //_canLand = false;
             }
             if (!_isGrounded)
+            {
                 animator.SetBool("isOnGround", false);
+                //particle.SetBool("isLanding", false);
+                //_canLand = true;
+
+            }
 
             if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
                 accelerationTimer = Data.ResetAcceleration;
