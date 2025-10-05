@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CheckPoint : MonoBehaviour
 {
+    [SerializeField] private Animator animator;
     public PlayerHandler handler;
 
     private void Update()
@@ -15,6 +16,7 @@ public class CheckPoint : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
+            animator.SetBool("isTriggered", true);
             handler.lastSavedPos = transform.position;
         }
     }

@@ -122,6 +122,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!95 &214161344 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 8625940847924554709, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
+  m_PrefabInstance: {fileID: 1256538710}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &354987402
 GameObject:
   m_ObjectHideFlags: 0
@@ -220,23 +225,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.7612193
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalScale.y
-      value: 3.6501606
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.5934129
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -11.7
+      value: -11.78
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -7.51
+      value: -8.25
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalPosition.z
@@ -34383,29 +34388,33 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 141572141683226037, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 1437971351}
     - target: {fileID: 716466910671098079, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_Name
       value: CheckPoint (1)
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.7612193
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalScale.y
-      value: 3.6501606
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.5934129
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10
+      value: -9.94
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -9.08
+      value: -9.94
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalPosition.z
@@ -34442,7 +34451,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 716466910671098079, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1437971351}
   m_SourcePrefab: {fileID: 100100000, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
 --- !u!1001 &1256538710
 PrefabInstance:
@@ -34452,29 +34464,33 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 141572141683226037, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 214161344}
     - target: {fileID: 716466910671098079, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_Name
       value: CheckPoint
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.7612193
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalScale.y
-      value: 3.6501606
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.5934129
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -13.38
+      value: -13.4757
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -9.08
+      value: -9.918
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalPosition.z
@@ -34590,7 +34606,7 @@ GameObject:
   - component: {fileID: 1342928436}
   - component: {fileID: 1342928435}
   - component: {fileID: 1342928437}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Tilemap2Collision
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -77079,6 +77095,32 @@ TilemapCollider2D:
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0
   m_UseDelaunayMesh: 0
+--- !u!1 &1437971350 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 716466910671098079, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
+  m_PrefabInstance: {fileID: 1255260059}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &1437971351
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1437971350}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 5080c9172eeb46344827a5086cf14382, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &1460638897 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7185284038974879327, guid: 45d85e91e4a80434ba19b093a0f2c0ce, type: 3}
@@ -77640,15 +77682,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalScale.x
-      value: 2.4651947
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalScale.y
-      value: 5.577503
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalScale.z
-      value: 2.4651947
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6251477423638015203, guid: 1e28adf383f16b2408ab08e65146b460, type: 3}
       propertyPath: m_LocalPosition.x
