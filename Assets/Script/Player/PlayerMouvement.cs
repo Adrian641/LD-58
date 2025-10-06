@@ -224,6 +224,8 @@ public class PlayerMouvement : MonoBehaviour
             animator.SetBool("isRunning", true);
         else
             animator.SetBool("isRunning", false);
+
+        Debug.Log(rb.velocity.x);
     }
 
     void Walk(float acceleration)
@@ -260,7 +262,6 @@ public class PlayerMouvement : MonoBehaviour
     {
         if (_isTouchingWall && !_isGrounded && horizontalInput != 0 && rb.velocity.y < 0f && !_isGrabing)
         {
-            accelerationTimer = Data.ResetAcceleration;
             _isSliding = true;
             float slideSpeed = -Data.SlideSpeed * slideAcceleration;
             if (_isSliding)
@@ -287,6 +288,11 @@ public class PlayerMouvement : MonoBehaviour
             wallJumpCounter = wallJumpTime;
 
             CancelInvoke(nameof(StopWallJumping));
+        }
+        else if (!_isSliding && rb.velocity.y < -12f)
+        {
+
+            wallJumpCounter = -10f;
         }
         else
         {
@@ -327,6 +333,7 @@ public class PlayerMouvement : MonoBehaviour
             }
             else if (Input.GetKey(KeyCode.S) && _isTouchingWall)
             {
+                accelerationTimer = Data.ResetAcceleration;
                 rb.velocity = Vector2.zero;
                 rb.velocity = new Vector2(0f, -Data.ClimbSpeed * downAcc);
             }
@@ -347,7 +354,7 @@ public class PlayerMouvement : MonoBehaviour
                 _isWallJumping = true;
                 rb.gravityScale = Data.gravityScale;
                 rb.velocity = new Vector2(Data.WallJumpForce.x * wallJumpingDir, Data.WallJumpForce.y);
-                GripCooldown = 0.8f;
+                GripCooldown = 0.2f;
                 _isGrabing = false;
             }
 
