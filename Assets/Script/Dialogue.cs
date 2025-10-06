@@ -14,7 +14,10 @@ public class Dialogue : MonoBehaviour
     void Start()
     {
         textComponent.text = string.Empty;
-        StartDialogue();
+        if (Input.GetMouseButtonDown(0))
+        {
+            StartDialogue();
+        }
     }
 
     // Update is called once per frame

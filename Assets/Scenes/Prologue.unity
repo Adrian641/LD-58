@@ -26690,6 +26690,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   textComponent: {fileID: 999824524}
   lines:
+  - 
   - There you are Alex! I've been looking for you all morning!
   - Don't lie, old man. You called me in five minutes ago.
   textSpeed: 0.1
