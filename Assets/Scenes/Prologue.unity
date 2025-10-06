@@ -8787,8 +8787,11 @@ MonoBehaviour:
   - 'Lady: And does that involve going East?'
   - 'Alex: Hold on . . . '
   - 'Alex: Yes. Why?'
-  - 'Lady: If that''s your plan, you''re gonna need a few tools, otherwise you won''t
-    make it.'
+  - 'Lady: If that''s your plan, I hope you''re well prepared.'
+  - 'Alex: It can''t be THAT bad.'
+  - 'Lady: The number of casualties on this mountain are over the thousands.'
+  - 'Alex: Oh...'
+  - 'Lady: Goodluck!'
   contButton: {fileID: 1232707148}
   startButton: {fileID: 198596336}
   wordSpeed: 0.033
