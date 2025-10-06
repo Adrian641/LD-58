@@ -8,13 +8,14 @@ using UnityEngine.UIElements;
 public class PlayerMouvement : MonoBehaviour
 {
     [SerializeField] private Animator animator;
-    //[SerializeField] private Animator particle;
+    [SerializeField] private Animator particle;
 
     public PlayerMouvementData Data; // Make a reference to the PlayerMouvementData script which holds most of the variables and logic
 
     public bool _isGrounded = false;
     public Transform GroundCheck;
     public LayerMask GroundLayer;
+    public float DownTimer;
 
     public bool _isTouchingWall = false;
     public Transform WallCheck;
@@ -29,6 +30,7 @@ public class PlayerMouvement : MonoBehaviour
     private float bufferJumpTimer;
     private bool _canBufferJump;
 
+    private bool _landed;
     private bool _canDash;
     private bool _isFrozen;
     private float frozenTimer;
@@ -59,6 +61,8 @@ public class PlayerMouvement : MonoBehaviour
 
     private void Update()
     {
+        DownTimer -= Time.deltaTime;
+
         if (!_isFrozen)
         {
             rb.gravityScale = Data.gravityScale;
@@ -116,11 +120,6 @@ public class PlayerMouvement : MonoBehaviour
             if (_isGrounded)
             {
                 currentStamina = Data.Stamina;
-                //if (_canLand)
-                //{
-                //    particle.SetBool("isLanding", true);
-
-                //}
                 coyoteJumpTimer = Data.CoyoteJumpTime;
                 _canDash = true;
                 _isSliding = false;
@@ -128,13 +127,11 @@ public class PlayerMouvement : MonoBehaviour
                 animator.SetBool("isJumping", false);
                 animator.SetBool("isFalling", false);
                 animator.SetBool("isOnGround", true);
-                //_canLand = false;
             }
             if (!_isGrounded)
             {
                 animator.SetBool("isOnGround", false);
-                //particle.SetBool("isLanding", false);
-                //_canLand = true;
+                particle.SetBool("isLanding", false);
 
             }
 
@@ -148,7 +145,6 @@ public class PlayerMouvement : MonoBehaviour
             else
                 animator.SetBool("hasDash", false);
 
-            Debug.Log(rb.velocity.y);
 
             if (rb.velocity.y < 0f)
             {
@@ -181,9 +177,12 @@ public class PlayerMouvement : MonoBehaviour
                 animator.SetBool("isFalling", false);
                 animator.SetBool("isJumping", false);
             }
+
         }
+
         else
         {
+
             frozenTimer -= Time.fixedDeltaTime;
             rb.gravityScale = 0f;
             if (frozenTimer < 0f)
@@ -195,6 +194,21 @@ public class PlayerMouvement : MonoBehaviour
                 tr.emitting = false;
                 accelerationTimer = Data.ResetAcceleration;
             }
+
+        }
+        if (_isGrounded && !_landed )
+        {
+            _landed = true;
+            Debug.Log("Huuuuuuuhh");
+            particle.SetBool("isLanding", true);
+            DownTimer = 0.5f;
+            if (DownTimer<0f)
+            {
+                particle.SetBool("isLanding", false);
+                _landed = false;
+            }
+            
+
         }
         if (currentStamina > 0)
         {
