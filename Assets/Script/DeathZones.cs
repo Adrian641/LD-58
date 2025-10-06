@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class DeathZones : MonoBehaviour
 {
+    AudioManager AudioManager;
+
+    private void Awake()
+    {
+        AudioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
+
     public PlayerHandler handler;
 
     private void Update()
@@ -16,6 +23,7 @@ public class DeathZones : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             handler._isDead = true;
+            AudioManager.PlaySFX(AudioManager.death);
         }
     }
 }
