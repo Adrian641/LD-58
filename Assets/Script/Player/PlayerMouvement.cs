@@ -353,13 +353,13 @@ public class PlayerMouvement : MonoBehaviour
                 rb.velocity = Vector2.zero;
             }
 
-            if (Input.GetKeyDown(KeyCode.Space) && horizontalInput == 0)
+            if (Input.GetKeyDown(KeyCode.Space) && (horizontalInput == 0 || horizontalInput != wallJumpingDir))
             {
                 rb.AddForce(Vector2.up * Data.JumpForce, ForceMode2D.Impulse);
                 GripCooldown = 0.4f;
                 _isGrabing = false;
             }
-            if (Input.GetKeyDown(KeyCode.Space) && horizontalInput != 0)
+            if (Input.GetKeyDown(KeyCode.Space) && (horizontalInput  == wallJumpingDir))
             {
                 wallJumpCounter = wallJumpTime;
                 _isWallJumping = true;
