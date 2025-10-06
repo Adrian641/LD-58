@@ -192,7 +192,7 @@ public class PlayerMouvement : MonoBehaviour
         else
         {
 
-            frozenTimer -= Time.fixedDeltaTime;
+            frozenTimer -= Time.deltaTime;
             rb.gravityScale = 0f;
             if (frozenTimer < 0f)
             {
