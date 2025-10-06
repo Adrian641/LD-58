@@ -331,7 +331,8 @@ public class PlayerMouvement : MonoBehaviour
     void WallGrab(float downAcc)
     {
         downAcc = Mathf.Clamp(downAcc, 0f, Data.MaxFallSpeed / Data.ClimbSpeed);
-        if (_isTouchingWall && Input.GetKey(KeyCode.Mouse0) && GripCooldown < 0f)
+        if (_isTouchingWall && Input.GetKey(KeyCode.Mouse0) && GripCooldown < 0f || _isTouchingWall && Input.GetKey(KeyCode.M) && GripCooldown < 0f)
+
         {
             _isGrabing = true;
             _isSliding = false;
