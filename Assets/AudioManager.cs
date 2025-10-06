@@ -10,8 +10,6 @@ public class AudioManager : MonoBehaviour
 
     [Header("---- Audio Clip ----")]
     public AudioClip background;
-    public AudioClip level;
-    public AudioClip epilogue;
     public AudioClip step;
     public AudioClip jump;
     public AudioClip dash;
