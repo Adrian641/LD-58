@@ -33257,6 +33257,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: checkArrow
       objectReference: {fileID: 0}
+    - target: {fileID: 6527190934684112180, guid: cb8bb00b73aa5a5469afec82bc7c6f58, type: 3}
+      propertyPath: goNextLevel
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7551615705711645123, guid: cb8bb00b73aa5a5469afec82bc7c6f58, type: 3}
       propertyPath: m_LocalPosition.x
       value: 128.28
