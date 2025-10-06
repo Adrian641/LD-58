@@ -364,7 +364,7 @@ public class PlayerMouvement : MonoBehaviour
                 accelerationTimer = Data.ResetAcceleration;
                 rb.gravityScale = Data.gravityScale;
                 rb.velocity = new Vector2(0f, Data.JumpForce);
-                GripCooldown = 0.8f;
+                GripCooldown = 0.6f;
                 _isGrabing = false;
             }
 
