@@ -15,7 +15,6 @@ public class PlayerMouvement : MonoBehaviour
     public bool _isGrounded = false;
     public Transform GroundCheck;
     public LayerMask GroundLayer;
-    public float DownTimer;
 
     public bool _isTouchingWall = false;
     public Transform WallCheck;
@@ -30,7 +29,7 @@ public class PlayerMouvement : MonoBehaviour
     private float bufferJumpTimer;
     private bool _canBufferJump;
 
-    private bool _landed;
+    public bool _justLanded;
     private bool _canDash;
     private bool _isFrozen;
     private float frozenTimer;
@@ -53,6 +52,8 @@ public class PlayerMouvement : MonoBehaviour
 
     private float GripCooldown;
     float downGripSlipAcc;
+
+    public float DownTimer;
 
     public Rigidbody2D rb;
     private float horizontalInput;
@@ -196,24 +197,23 @@ public class PlayerMouvement : MonoBehaviour
             }
 
         }
-        if (_isGrounded && !_landed )
+        if (_justLanded)
         {
-            _landed = true;
-            Debug.Log("Huuuuuuuhh");
             particle.SetBool("isLanding", true);
-            DownTimer = 0.5f;
-            if (DownTimer<0f)
+            if (DownTimer < 0f)
             {
+                _justLanded = false;
                 particle.SetBool("isLanding", false);
-                _landed = false;
             }
-            
-
         }
+
         if (currentStamina > 0)
         {
             WallGrab(downGripSlipAcc);
         }
+
+        if (!_isGrabing)
+            downGripSlipAcc = 0f;
 
         CreateChecks();
 
@@ -314,6 +314,7 @@ public class PlayerMouvement : MonoBehaviour
 
     void WallGrab(float downAcc)
     {
+        downAcc = Mathf.Clamp(downAcc, 0f, Data.MaxFallSpeed / Data.ClimbSpeed);
         if (_isTouchingWall && Input.GetKey(KeyCode.Mouse0) && GripCooldown < 0f)
         {
             _isGrabing = true;
@@ -390,5 +391,14 @@ public class PlayerMouvement : MonoBehaviour
 
         if (Dir.x == -1)
             transform.localScale = new Vector3(-1f, 1f, 1f);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Ground"))
+        {
+            _justLanded = true;
+            DownTimer = 0.05f;
+        }
     }
 }
