@@ -167,7 +167,7 @@ public class PlayerMouvement : MonoBehaviour
                 downwardAcceleration = 1f;
             }
 
-            if (rb.velocity.y > 5f)
+            if (rb.velocity.y > 2f)
             {
                 animator.SetBool("isJumping", true);
                 animator.SetBool("isStable", false);
