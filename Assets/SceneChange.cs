@@ -18,7 +18,7 @@ public class SceneChange : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            AudioManager.PlaySFX(AudioManager.checkpoint);
+            AudioManager.PlaySFX(AudioManager.arrow);
 
             if (goNextLevel)
             {

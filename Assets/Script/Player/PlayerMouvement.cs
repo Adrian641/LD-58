@@ -10,6 +10,14 @@ public class PlayerMouvement : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private Animator particle;
 
+    AudioManager AudioManager;
+
+
+    private void Awake()
+    {
+        AudioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
+
     public PlayerMouvementData Data; // Make a reference to the PlayerMouvementData script which holds most of the variables and logic
 
     public bool _isGrounded = false;
@@ -238,6 +246,7 @@ public class PlayerMouvement : MonoBehaviour
         rb.velocity = new Vector2(rb.velocity.x, 0f);
         rb.AddForce(Vector2.up * Data.JumpForce, ForceMode2D.Impulse);
         _canBufferJump = false;
+        AudioManager.PlaySFX(AudioManager.jump);
     }
 
     void JumpCut()
@@ -256,6 +265,7 @@ public class PlayerMouvement : MonoBehaviour
             rb.velocity = new Vector2(Dir.x * Data.DashForce, 0f);
         if (_isTouchingWall)
             _isFrozen = false;
+        AudioManager.PlaySFX(AudioManager.dash);
     }
 
     void Slide()

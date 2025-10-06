@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+
 public class SceneController : MonoBehaviour
 {
     public static SceneController instance;
+    AudioManager AudioManager;
 
     private void Awake()
     {
+        AudioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+
         if (instance == null)
         {
             instance = this;
