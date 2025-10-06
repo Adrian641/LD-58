@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class FallingPlatform : MonoBehaviour
 {
+    AudioManager AudioManager;
+
+    private void Awake()
+    {
+        AudioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
+
     [SerializeField] private Animator animator;
 
     private int groundLayer = 6;
@@ -26,9 +33,12 @@ public class FallingPlatform : MonoBehaviour
         
         if (_isStepedOn)
         {
+            //AudioManager.PlaySFX(AudioManager.platform);
+
             animator.SetBool("isBreaking", true);
             if (breakTimer < 0f)
             {
+                AudioManager.PlaySFX(AudioManager.crumble);
                 gameObject.layer = invisibleLayer;
                 collider.enabled = false;
                 spriteRenderer.enabled = false;

@@ -17,6 +17,8 @@ public class AudioManager : MonoBehaviour
     public AudioClip death;
     public AudioClip arrow;
     public AudioClip checkpoint;
+    public AudioClip crumble;
+    public AudioClip platform;
 
     private void Start()
     {
