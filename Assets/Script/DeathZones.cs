@@ -5,7 +5,6 @@ using UnityEngine;
 public class DeathZones : MonoBehaviour
 {
     AudioManager AudioManager;
-
     private void Awake()
     {
         AudioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
