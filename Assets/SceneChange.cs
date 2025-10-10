@@ -24,10 +24,10 @@ public class SceneChange : MonoBehaviour
             {
                 SceneController.instance.NextLevel();
             }
-            else
-            {
-                SceneController.instance.LoadScene(levelName);
-            }
+            //else
+            //{
+            //    SceneController.instance.LoadScene(levelName);
+            //}
         }
     }
 }
